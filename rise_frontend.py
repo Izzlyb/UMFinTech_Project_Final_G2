@@ -23,6 +23,7 @@ with open('NFTMarketEvents.json') as f:
 # Create contract instances
 nft_market_contract = w3.eth.contract(address=nft_market_address, abi=nft_market_abi)
 nft_token_contract = w3.eth.contract(address=nft_token_address, abi=nft_token_abi)
+nft_market_events = w3.eth.contract(address=nft_market_events, abi=nft_events_abi)
 
 
 # Initialize IPFS client
