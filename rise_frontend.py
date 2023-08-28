@@ -1,24 +1,40 @@
 import streamlit as st
 from web3 import Web3
+from ipfshttpclient import Client
 import requests
 import json
 
 # Connect to an Ethereum node
-w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID'))
+w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/313367f15ce5484eb9d7db3f45cdc687'))
 
 # Addresses of the deployed contracts
-nft_market_address = '0x935168216688EBDd7463a054820022cA34BCf97E'
-nft_token_address = '0x27E663a109b42bb1a3D64039B9FF41ee3009A3c0'
+nft_market_address = '0xc980839A5F3003760cD4BD55d22f0b63a652Eac9'
+nft_token_address = '0xA5161992959f9BbD3a815C34f06789DBF9b9fE95'
+nft_market_events ='0x49df71ab6f38d7F5CF3Ae5E7537c17A62d15E42A'
 
 # Load contract ABIs
 with open('NFTMarketABI.json') as f:
     nft_market_abi = json.load(f)
 with open('StringCheeseABI.json') as f:
     nft_token_abi = json.load(f)
+with open('NFTMarketEvents.json') as f:
+    nft_events_abi = json.load(f)
 
 # Create contract instances
 nft_market_contract = w3.eth.contract(address=nft_market_address, abi=nft_market_abi)
 nft_token_contract = w3.eth.contract(address=nft_token_address, abi=nft_token_abi)
+
+
+# Initialize IPFS client
+ipfs_client = Client('azure-innocent-iguana-297.mypinata.cloud')  # Change to your IPFS node address
+
+
+# Replace the IPFS URL with the actual IPFS hash
+pinata_metadata_hash = 'QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
+
+# Fetch NFT metadata using IPFS client
+response = ipfs_client.cat(pinata_metadata_hash)
+nfts = json.loads(response)
 
 st.title('R.I.S.E Marketplace')
 
@@ -98,8 +114,16 @@ def create_nft():
 nfts = [
     {"name": "NFT 1", "price": 0.1, "tokenId": 1},
     {"name": "NFT 2", "price": 0.05, "tokenId": 2},
-    # Add more NFTs
+    {"name": "NFT 3", "price": 0.05, "tokenId": 3},
+    {"name": "NFT 4", "price": 0.05, "tokenId": 4},
+    {"name": "NFT 5", "price": 0.05, "tokenId": 5},
+    {"name": "NFT 6", "price": 0.05, "tokenId": 6},
+    {"name": "NFT 7", "price": 0.05, "tokenId": 7},
+    {"name": "NFT 8", "price": 0.05, "tokenId": 8},
+    {"name": "NFT 9", "price": 0.05, "tokenId": 9},
+    {"name": "NFT 10", "price": 0.05, "tokenId": 10},
 ]
 
 # Display NFTs and handle actions
 display_nfts(nfts)
+
