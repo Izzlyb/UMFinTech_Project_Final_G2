@@ -26,16 +26,13 @@ nft_token_contract = w3.eth.contract(address=nft_token_address, abi=nft_token_ab
 nft_market_events = w3.eth.contract(address=nft_market_events, abi=nft_events_abi)
 
 
-# Initialize IPFS client
-ipfs_client = Client('azure-innocent-iguana-297.mypinata.cloud')  # Change to your IPFS node address
+# Replace 'QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE' with your IPFS hash
+ipfs_hash = 'QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
+ipfs_gateway_url = f'https://gateway.pinata.cloud/ipfs/QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
 
-
-# Replace the IPFS URL with the actual IPFS hash
-pinata_metadata_hash = 'QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
-
-# Fetch NFT metadata using IPFS client
-response = ipfs_client.cat(pinata_metadata_hash)
-nfts = json.loads(response)
+# Fetch content from the IPFS gateway
+response = requests.get(ipfs_gateway_url)
+nfts = response.json()
 
 st.title('R.I.S.E Marketplace')
 
