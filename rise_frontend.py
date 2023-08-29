@@ -5,7 +5,7 @@ import requests
 import json
 
 # Connect to an Ethereum node
-w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/313367f15ce5484eb9d7db3f45cdc687'))
+w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
 
 # Addresses of the deployed contracts
 nft_market_address = '0xC3da1469d665FA184d7C50147cFD71d23D753603'
@@ -50,64 +50,64 @@ def display_nfts(nfts):
         create_nft_button = st.button(f'Create NFT {nft["name"]}')
 
         if buy_button:
-            buy_nft(nft["tokenId"], nft["price"], wallet_address)  
+            buy_nft(nft["tokenId"], nft["price"], wallet_address, chain_id=1337)  
 
         if list_button:
-            list_nft(nft["tokenId"], nft["price"], wallet_address)  
+            list_nft(nft["tokenId"], nft["price"], wallet_address, chain_id=1337)  
 
         if coming_soon_button:
-            mark_coming_soon(nft["tokenId"], wallet_address)  
+            mark_coming_soon(nft["tokenId"], wallet_address, chain_id=1337)  
 
         if create_nft_button:
-            create_nft(wallet_address)  
+            create_nft(wallet_address, chain_id=1337)  
 
-def buy_nft(token_id, price):
+def buy_nft(token_id, price, wallet_address, chain_id):
     # Call the buyNFT function on the NFTMarket contract
     transaction = nft_market_events.functions.buyNFT(token_id).transact({
-        'chainId': 1,  # Ethereum mainnet
+        'chainId': 1337,  # Ethereum mainnet
         'gas': 2000000,  # Adjust gas limit
         'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
         'nonce': w3.eth.get_transaction_count(wallet_address),
         'value': w3.to_wei(price, 'ether')  # Send the required value to buy the NFT
     })
-    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x3e9c8468ed5bb35e7cac7c545744f99f0f74381d7b56b57e8fc526eb08e93e0c')
+    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
     pass
 
-def list_nft(token_id, price):
+def list_nft(token_id, price, wallet_address, chain_id):
     # Call the listNFT function on the NFTMarket contract
     transaction = nft_market_events.functions.listNFT(token_id, price).transact({
-        'chainId': 1,  # Ethereum mainnet
+        'chainId': 1337,  # Ethereum mainnet
         'gas': 2000000,  # Adjust gas limit
         'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
         'nonce': w3.eth.get_transaction_count(wallet_address),
     })
-    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x3e9c8468ed5bb35e7cac7c545744f99f0f74381d7b56b57e8fc526eb08e93e0c')
+    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
 
-def mark_coming_soon(token_id):
+def mark_coming_soon(token_id, chain_id):
     # Call the markNFTComingSoon function on the NFTMarket contract
     transaction = nft_market_events.functions.markNFTComingSoon(token_id).transact({
-        'chainId': 1,  # Ethereum mainnet
+        'chainId': 1337,  # Ethereum mainnet
         'gas': 2000000,  # Adjust gas limit
         'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
         'nonce': w3.eth.get_transaction_count(wallet_address),
     })
-    signed_txn = w3.eth.account.signTransaction(transaction,       private_key='0x3e9c8468ed5bb35e7cac7c545744f99f0f74381d7b56b57e8fc526eb08e93e0c')
+    signed_txn = w3.eth.account.signTransaction(transaction,       private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
 
 def create_nft():
     # Call the createNFT function on the NFTMarket contract
     transaction = nft_market_contract.functions.createMarketItem().transact({
-        'chainId': 1,  # Ethereum mainnet
+        'chainId': 1337,  # Ethereum mainnet
         'gas': 2000000,  # Adjust gas limit
         'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
         'nonce': w3.eth.get_transaction_count(wallet_address),
     })
-    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x3e9c8468ed5bb35e7cac7c545744f99f0f74381d7b56b57e8fc526eb08e93e0c')
+    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
 
