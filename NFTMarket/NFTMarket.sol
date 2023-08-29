@@ -34,6 +34,7 @@ contract NFTMarket is ReentrancyGuard {
       uint256 price,
       bool sold
     );
+    event NFTListed(uint256 indexed tokenId, uint256 price);
 
     // constructor() ERC721("FinTech Tokens", "FTTK") {
     //   owner = payable(msg.sender);
@@ -79,6 +80,8 @@ contract NFTMarket is ReentrancyGuard {
                 );
     }
 
+    /* Creates the sale of a marketplace item */
+    /* Transfers ownership of the item, as well as funds between parties */
     function createMarketSell(
         address nftContract, 
         uint256 itemId
@@ -95,6 +98,7 @@ contract NFTMarket is ReentrancyGuard {
         payable(owner).transfer(listingPrice);
     }
 
+    /* Returns all unsold market items */
     function fetchMarketItems() public view returns (MarketItem[] memory ) {
         uint itemCount = _itemIds.current();
         uint unsoldItemsCount = _itemIds.current() - _itemsSold.current();
@@ -112,6 +116,7 @@ contract NFTMarket is ReentrancyGuard {
         return items;
     }
 
+    /* Returns only items that a user has purchased */
     function fetchMyNFTs() public view returns (MarketItem[] memory ) {
         uint totalItemCount = _itemIds.current();
         uint itemCount = 0;
@@ -136,6 +141,7 @@ contract NFTMarket is ReentrancyGuard {
         return items;
     }
 
+    /* Returns only items a user has listed */
     function fetchItemsCreated() public view returns (MarketItem[] memory) {
         uint totalItemCount = _itemIds.current();
         uint itemCount = 0;
@@ -158,5 +164,14 @@ contract NFTMarket is ReentrancyGuard {
         }
 
         return items;
+    }
+
+    function clearListing(uint256 tokenId) external onlyOwner {
+        idToMarketItem[tokenId] = 0;
+        idToMarketItem[tokenId].nftContract = address(0);
+        idToMarketItem[tokenId].seller = address(0);
+        idToMarketItem[tokenId].owner = address(0);
+        idToMarketItem[tokenId].price = 0;
+        idToMarketItem[tokenId].sold = true;
     }
 }
