@@ -8,9 +8,9 @@ import json
 w3 = Web3(Web3.HTTPProvider('https://mainnet.infura.io/v3/313367f15ce5484eb9d7db3f45cdc687'))
 
 # Addresses of the deployed contracts
-nft_market_address = '0xc980839A5F3003760cD4BD55d22f0b63a652Eac9'
-nft_token_address = '0xA5161992959f9BbD3a815C34f06789DBF9b9fE95'
-nft_market_events ='0x49df71ab6f38d7F5CF3Ae5E7537c17A62d15E42A'
+nft_market_address = '0xC3da1469d665FA184d7C50147cFD71d23D753603'
+nft_token_address = '0x5A3e8FE3c2891D5b2b83A60B303b41654587c983'
+nft_market_events ='0x1B36628CF0442E2E6136e2A5628086193e69b3d4'
 
 # Load contract ABIs
 with open('NFTMarketABI.json') as f:
