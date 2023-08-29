@@ -1,32 +1,42 @@
+import os 
 import streamlit as st
 from web3 import Web3
-from ipfshttpclient import Client
+from dotenv import load_dotenv
 import requests
 import json
+
+load_dotenv()
 
 # Connect to an Ethereum node
 w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
 
-# Addresses of the deployed contracts
-nft_market_address = '0xC3da1469d665FA184d7C50147cFD71d23D753603'
-nft_token_address = '0x5A3e8FE3c2891D5b2b83A60B303b41654587c983'
-nft_market_events ='0x1B36628CF0442E2E6136e2A5628086193e69b3d4'
+@st.cache_resource
+def load_contracts():
+    # Load contract ABIs
+    with open('NFTMarketABI.json') as f:
+        nft_market_abi = json.load(f)
+    with open('StringCheeseABI.json') as f:
+        nft_token_abi = json.load(f)
+    with open('NFTMarketEvents.json') as f:
+        nft_events_abi = json.load(f)
+        
+    # Addresses of the deployed contracts
+    nft_market_address = os.getenv('NFT_MARKET_ADDRESS')
+    nft_token_address = os.getenv('NFT_TOKEN_ADDRESS')
+    nft_market_events = os.getenv('NFT_MARKET_EVENTS')
+    
+    # Create contract instances
+    nft_market_contract = w3.eth.contract(address=nft_market_address, abi=nft_market_abi)
+    nft_token_contract = w3.eth.contract(address=nft_token_address, abi=nft_token_abi)
+    nft_market_events_contract = w3.eth.contract(address=nft_market_events, abi=nft_events_abi)
 
-# Load contract ABIs
-with open('NFTMarketABI.json') as f:
-    nft_market_abi = json.load(f)
-with open('StringCheeseABI.json') as f:
-    nft_token_abi = json.load(f)
-with open('NFTMarketEvents.json') as f:
-    nft_events_abi = json.load(f)
+    return nft_market_contract, nft_token_contract, nft_market_events_contract
 
-# Create contract instances
-nft_market_contract = w3.eth.contract(address=nft_market_address, abi=nft_market_abi)
-nft_token_contract = w3.eth.contract(address=nft_token_address, abi=nft_token_abi)
-nft_market_events = w3.eth.contract(address=nft_market_events, abi=nft_events_abi)
+# Load the contract
+nft_market_contract, nft_token_contract, nft_market_events_contract = load_contracts()
 
 
-# Replace 'QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE' with your IPFS hash
+
 ipfs_hash = 'QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
 ipfs_gateway_url = f'https://gateway.pinata.cloud/ipfs/QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
 
@@ -38,6 +48,46 @@ st.title('R.I.S.E Marketplace')
 
 # Input field for entering wallet address
 wallet_address = st.text_input('Enter your Wallet Address')
+
+                        
+#def register_nft_with_metadata(metadata, wallet_address, chain_id):
+    # Step 1: Upload metadata to IPFS
+    #ipfs_response = requests.post('https://ipfs.infura.io:5001/api/v0/add', files={'file': json.dumps(metadata)})
+    #ipfs_hash = ipfs_response.json()['QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE']
+
+    # Step 2: Call the registerNFT function on the NFTToken contract
+   # transaction = nft_token_contract.functions.registerNFT(ipfs_hash).buildTransaction({
+       # 'chainId': chain_id,
+       # 'gas': 2000000,
+       # 'gasPrice': w3.toWei('50', 'gwei'),
+      #  'nonce': w3.eth.get_transaction_count(wallet_address),
+ #   })
+  #  signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY'))
+  #  tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
+   # st.write(f'Transaction sent: {tx_hash.hex()}')
+
+#metadata = {
+    #'name': 'My NFT',
+   # 'description': 'An example NFT with IPFS metadata',
+   # 'image': 'ipfs://QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
+#}
+
+#register_nft_with_metadata(metadata, wallet_address, chain_id=1337)
+
+def mint_nft(ipfs_metadata_uri, wallet_address, chain_id):
+    # Call the mintNFT function on the NFTToken contract
+    transaction = nft_token_contract.functions.mintNFT(ipfs_metadata_uri).transact({
+        'chainId': chain_id,
+        'gas': 2000000,
+        'gasPrice': w3.toWei('50', 'gwei'),
+        'nonce': w3.eth.get_transaction_count(wallet_address),
+    })
+    signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY'))
+    tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
+    st.write(f'Transaction sent: {tx_hash.hex()}')
+    
+ipfs_metadata_uri = 'ipfs://QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
+mint_nft(ipfs_metadata_uri, wallet_address, chain_id=1337)
 
 # Display available NFTs
 def display_nfts(nfts):
@@ -59,18 +109,19 @@ def display_nfts(nfts):
             mark_coming_soon(nft["tokenId"], wallet_address, chain_id=1337)  
 
         if create_nft_button:
-            create_nft(wallet_address, chain_id=1337)  
-
+            create_nft(wallet_address, chain_id=1337)
+  
+    
 def buy_nft(token_id, price, wallet_address, chain_id):
     # Call the buyNFT function on the NFTMarket contract
-    transaction = nft_market_events.functions.buyNFT(token_id).transact({
-        'chainId': 1337,  # Ethereum mainnet
-        'gas': 2000000,  # Adjust gas limit
-        'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
+    transaction = nft_market_events_contract.functions.buyNFT(token_id).transact({
+        'chainId': 1337,
+        'gas': 2000000,
+        'gasPrice': w3.to_wei('50', 'gwei'),
         'nonce': w3.eth.get_transaction_count(wallet_address),
-        'value': w3.to_wei(price, 'ether')  # Send the required value to buy the NFT
+        'value': w3.to_wei(price, 'ether')
     })
-    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
+    signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY_ADDRESS'))
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
     pass
@@ -83,7 +134,7 @@ def list_nft(token_id, price, wallet_address, chain_id):
         'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
         'nonce': w3.eth.get_transaction_count(wallet_address),
     })
-    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
+    signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY_ADDRESS'))
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
 
@@ -95,7 +146,7 @@ def mark_coming_soon(token_id, chain_id):
         'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
         'nonce': w3.eth.get_transaction_count(wallet_address),
     })
-    signed_txn = w3.eth.account.signTransaction(transaction,       private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
+    signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY_ADDRESS'))
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
 
@@ -107,13 +158,13 @@ def create_nft():
         'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
         'nonce': w3.eth.get_transaction_count(wallet_address),
     })
-    signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
+    signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY_ADDRESS'))
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
 
 # Fetch NFT data from the contracts (replace with your actual function calls)
 nfts = [
-    {"name": "NFT 1", "price": 0.18, "tokenId": 1},
+    {"name": "NFT 1","price": 0.18,"tokenId": 1},
     {"name": "NFT 2", "price": 0.82, "tokenId": 2},
     {"name": "NFT 3", "price": 0.96, "tokenId": 3},
     {"name": "NFT 4", "price": 0.77, "tokenId": 4},
