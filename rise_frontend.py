@@ -44,29 +44,7 @@ st.title('R.I.S.E Marketplace')
 # Input field for entering wallet address
 wallet_address = st.text_input('Enter your Wallet Address')
 
-                        
-#def register_nft_with_metadata(metadata, wallet_address, chain_id):
-    # Step 1: Upload metadata to IPFS
-    #ipfs_response = requests.post('https://ipfs.infura.io:5001/api/v0/add', files={'file': json.dumps(metadata)})
-    #ipfs_hash = ipfs_response.json()['QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE']
-
-    # Step 2: Call the registerNFT function on the NFTToken contract
-   # transaction = nft_token_contract.functions.registerNFT(ipfs_hash).buildTransaction({
-       # 'chainId': chain_id,
-       # 'gas': 2000000,
-       # 'gasPrice': w3.toWei('50', 'gwei'),
-      #  'nonce': w3.eth.get_transaction_count(wallet_address),
- #   })
-  #  signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY'))
-  #  tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
-   # st.write(f'Transaction sent: {tx_hash.hex()}')
-
-#metadata = {
-    #'name': 'My NFT',
-   # 'description': 'An example NFT with IPFS metadata',
-   # 'image': 'ipfs://QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
-#}
-
+                       
 #register_nft_with_metadata(metadata, wallet_address, chain_id=1337)
 
 def mint_nft(ipfs_metadata_uri, wallet_address, chain_id):
@@ -89,6 +67,7 @@ ipfs_metadata_uri = 'ipfs://QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
 def display_nfts(nfts):
     for nft in nfts:
         st.write(f'NFT: {nft["name"]}, Price: {nft["price"]}')
+        
 
         buy_button = st.button(f'Buy {nft["name"]}')
         list_button = st.button(f'List {nft["name"]}')
@@ -171,7 +150,7 @@ def getCurrentListingPrice():
 
 # Fetch NFT data from the contracts (replace with your actual function calls)
 nfts = [
-    {"name": "NFT 1","price": 0.18,"tokenId": 1, 'https://gateway.pinata.cloud/ipfs/QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE/1.png'},
+    {"name": "NFT 1","price": 0.18,"tokenId": 1},
     {"name": "NFT 2", "price": 0.82, "tokenId": 2},
     {"name": "NFT 3", "price": 0.96, "tokenId": 3},
     {"name": "NFT 4", "price": 0.77, "tokenId": 4},
