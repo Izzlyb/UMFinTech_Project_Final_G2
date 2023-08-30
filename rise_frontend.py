@@ -4,9 +4,8 @@ from web3 import Web3
 from dotenv import load_dotenv
 import requests
 import json
-from dotenv import load_dotenv
 
-load_dotenv("SAMPLE.env")
+load_dotenv('SAMPLE.env')
 
 # Connect to an Ethereum node
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
