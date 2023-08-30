@@ -171,7 +171,7 @@ def getCurrentListingPrice():
 
 # Fetch NFT data from the contracts (replace with your actual function calls)
 nfts = [
-    {"name": "NFT 1","price": 0.18,"tokenId": 1},
+    {"name": "NFT 1","price": 0.18,"tokenId": 1, 'https://gateway.pinata.cloud/ipfs/QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE/1.png'},
     {"name": "NFT 2", "price": 0.82, "tokenId": 2},
     {"name": "NFT 3", "price": 0.96, "tokenId": 3},
     {"name": "NFT 4", "price": 0.77, "tokenId": 4},

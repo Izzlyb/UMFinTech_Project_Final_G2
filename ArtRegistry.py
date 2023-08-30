@@ -7,7 +7,7 @@ import streamlit as st
 
 from pinata import pin_file_to_ipfs, pin_json_to_ipfs, convert_data_to_json
 
-load_dotenv()
+load_dotenv('SAMPLE.env')
 
 # Define and connect a new Web3 provider
 w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
@@ -21,11 +21,11 @@ w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 def load_contract():
 
     # Load the contract ABI
-    with open(Path('./contracts/compiled/artregistry_abi.json')) as f:
+    with open('ArtRegistry.json') as f:
         contract_abi = json.load(f)
 
     # Set the contract address (this is the address of the deployed contract)
-    contract_address = os.getenv("SMART_CONTRACT_ADDRESS")
+    contract_address = os.getenv("ART_CONTRACT_ADDRESS")
 
     # Get the contract
     contract = w3.eth.contract(
@@ -67,11 +67,7 @@ def pin_appraisal_report(report_content):
     return report_ipfs_hash
 
 
-st.title("Art Registry Appraisal System")
-st.write("Choose an account to get started")
-accounts = w3.eth.accounts
-address = st.selectbox("Select Account", options=accounts)
-st.markdown("---")
+
 
 ################################################################################
 # Register New Artwork
@@ -79,7 +75,7 @@ st.markdown("---")
 st.markdown("## Register New Artwork")
 artwork_name = st.text_input("Enter the name of the artwork")
 artist_name = st.text_input("Enter the artist name")
-initial_appraisal_value = st.text_input("Enter the initial appraisal amount")
+
 
 # Use the Streamlit `file_uploader` function create the list of digital image file types(jpg, jpeg, or png) that will be uploaded to Pinata.
 file = st.file_uploader("Upload Artwork", type=["jpg", "jpeg", "png"])
