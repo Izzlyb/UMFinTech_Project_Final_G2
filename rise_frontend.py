@@ -37,12 +37,12 @@ ipfs_gateway_url = f'https://gateway.pinata.cloud/ipfs/QmZqKGQEQFuc1wERQrbUVoxVg
 
 # Fetch content from the IPFS gateway
 response = requests.get(ipfs_gateway_url)
-nfts = response.json()
+#nfts = response.json()
 
 st.title('R.I.S.E Marketplace')
 
 # Input field for entering wallet address
-wallet_address = st.text_input('Enter your Wallet Address')
+wallet_address = os.getenv('NFT_TOKEN_ADDRESS')
 
 
 def mint_nft(ipfs_metadata_uri, wallet_address, chain_id):
@@ -61,14 +61,15 @@ def mint_nft(ipfs_metadata_uri, wallet_address, chain_id):
 ipfs_metadata_uri = 'ipfs://QmZqKGQEQFuc1wERQrbUVoxVggsHFVLhW8UrCPnFmoDTYE'
 # mint_nft(ipfs_metadata_uri, wallet_address, chain_id=1337)
 
-# Display available NFTs
+#  Display available NFTs
 def display_nfts(nfts):
-    for nft in nfts:
-        st.write(f'NFT: {nft["name"]}, Price: {nft["price"]}')
+    for nft_key, nft_data in nfts.items():
+        nft_name, nft_price, nft_token_id, nft_image_url = nft_data
+        st.sidebar.write(f'NFT: {nft_name}, Price: {nft_price}')
+        st.sidebar.image(nft_image_url, width=200)
         
-
-        buy_button = st.button(f'Buy {nft["name"]}')
-        list_button = st.button(f'List {nft["name"]}')
+        buy_button = st.sidebar.button(f'Buy {nft_name}')
+        list_button = st.sidebar.button(f'List {nft_name}')
         #coming_soon_button = st.button(f'Coming Soon {nft["name"]}')
         #create_nft_button = st.button(f'Create NFT {nft["name"]}')
 
@@ -147,19 +148,19 @@ def getCurrentListingPrice():
     st.write(receipt)
 
 # Fetch NFT data from the contracts (replace with your actual function calls)
-nfts = [
-    {"name": "NFT 1","price": 0.18,"tokenId": 1},
-    {"name": "NFT 2", "price": 0.82, "tokenId": 2},
-    {"name": "NFT 3", "price": 0.96, "tokenId": 3},
-    {"name": "NFT 4", "price": 0.77, "tokenId": 4},
-    {"name": "NFT 5", "price": 0.41, "tokenId": 5},
-    {"name": "NFT 6", "price": 0.58, "tokenId": 6},
-    {"name": "NFT 7", "price": 0.33, "tokenId": 7},
-    {"name": "NFT 8", "price": 0.23, "tokenId": 8},
-    {"name": "NFT 9", "price": 0.60, "tokenId": 9},
-    {"name": "NFT 10", "price": 0.09, "tokenId": 10},
-]
+nfts = {
+   "Image1": ["SLAMINA", 0.18, 1, './images/1.png'],
+   "Image2": ["DICK APEY",  0.82,  2, './images/2.png'],
+   "Image3": ["COWA-BABooN-GA",  0.96,  3, './images/3.png'],
+   "Image4": ["PURPLE STAR",  0.77,  4, './images/4.png'],
+   "Image5": ["READ",  0.41,  5, './images/5.png'],
+   "Image6": ["MORE",  0.58,  6, './images/6.png'],
+   "Image7": ["BOOKS",  0.33,  7, './images/7.png'],
+   "Image8":  ["APE WITH WINGS",  0.23,  8, './images/8.png'],
+   "Image9": ["WHO'S-WHO",  0.60,  9, './images/9.png'],
+   "Image10": ["PROSPECTOR",  0.09, 10, './images/10.png'],
+}
+
 
 # Display NFTs and handle actions
 display_nfts(nfts)
-
