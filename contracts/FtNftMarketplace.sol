@@ -8,6 +8,8 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract NFTMarketplace is ERC721URIStorage  {
     using Counters for Counters.Counter;
     //_tokenIds variable has the most recent minted tokenId
+    Counters.Counter private _tokenIds;
+    //_itemIds variable has the id of the tokens listed in the marketplace
     Counters.Counter private _itemIds;
     //Keeps track of the number of items sold on the marketplace
     Counters.Counter private _itemsSold;
@@ -62,22 +64,22 @@ contract NFTMarketplace is ERC721URIStorage  {
 
     //The first time a token is created, it is listed here
     // top level when creating a token for the first time:
-    // the URI is the metadata URI 
+    // the URI is the metadata URI: use: "https://ipfs.io/ipfs/<CID>" or "ipfs://<CID>"
     function createToken(string memory tokenURI, uint256 price) public payable returns (uint) {
         //Increment the tokenId counter, which is keeping track of the number of minted NFTs
-        _itemIds.increment();
-        uint256 newItemId = _itemIds.current();
+        _tokenIds.increment();
+        uint256 newTokenId = _tokenIds.current();
 
         //Mint the NFT with tokenId newTokenId to the address who called createToken
-        _safeMint(msg.sender, newItemId);
+        _safeMint(msg.sender, newTokenId);
 
         //Map the tokenId to the tokenURI (which is an IPFS URL with the NFT metadata)
-        _setTokenURI(newItemId, tokenURI);
+        _setTokenURI(newTokenId, tokenURI);
 
         //Helper function to update Global variables and emit an event
-        createListedToken(newItemId, price, tokenAddress);
+        createListedToken(newTokenId, price, tokenAddress);
 
-        return newItemId;
+        return newTokenId;
     }
 
     // Function to list a new NFT
@@ -159,6 +161,22 @@ contract NFTMarketplace is ERC721URIStorage  {
       _transfer(msg.sender, address(this), tokenId);
     }
 
+    function createMarketSell(
+        address nftContract, 
+        uint256 itemId
+        ) public payable {
+        uint price = idToMarketItem[itemId].price;
+        uint tokenId = idToMarketItem[itemId].tokenId;
+        require(msg.value == price, "Please send the asking price in order to complete transaction");
+
+        idToMarketItem[itemId].seller.transfer(price);
+        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
+        idToMarketItem[itemId].owner = payable(msg.sender);
+        idToMarketItem[itemId].currentlyListed = true;
+        _itemsSold.increment();
+        payable(ownerMp).transfer(price);
+    }
+
     function executeSale(uint256 tokenId) public payable {
         uint price = idToMarketItem[tokenId].price;
         address seller = idToMarketItem[tokenId].seller;
@@ -191,15 +209,19 @@ contract NFTMarketplace is ERC721URIStorage  {
     }
 
     function getLatestIdToListedToken() public view returns (MarketItem memory) {
-        uint256 currentTokenId = _itemIds.current();
-        return idToMarketItem[currentTokenId];
+        uint256 currentItemId = _itemIds.current();
+        return idToMarketItem[currentItemId];
     }
 
     function getListedForTokenId(uint256 tokenId) public view returns (MarketItem memory){
         return idToMarketItem[tokenId];
     }
 
-    function getCurrentToken() public view returns (uint256) {
+    function getCurrentTokenId() public view returns (uint256) {
+        return _tokenIds.current();
+    }
+
+    function getCurrentItemId() public view returns (uint256) {
         return _itemIds.current();
     }
 
@@ -251,21 +273,4 @@ contract NFTMarketplace is ERC721URIStorage  {
         //the array 'tokens' has the list of all NFTs in the marketplace
         return tokens;
     }
-    
-    function createMarketSell(
-        address nftContract, 
-        uint256 itemId
-        ) public payable {
-        uint price = idToMarketItem[itemId].price;
-        uint tokenId = idToMarketItem[itemId].tokenId;
-        require(msg.value == price, "Please send the asking price in order to complete transaction");
-
-        idToMarketItem[itemId].seller.transfer(price);
-        IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
-        idToMarketItem[itemId].owner = payable(msg.sender);
-        idToMarketItem[itemId].currentlyListed = true;
-        _itemsSold.increment();
-        payable(ownerMp).transfer(price);
-    }
-
 }

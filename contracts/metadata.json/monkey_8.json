@@ -1,0 +1,55 @@
+{
+    "title": "StringCheese Token Metadata - NFT #8",
+    "name": "FtNftMarketplace #8",
+    "description": {
+        "type": "string",
+        "description": "An NFT from the StringCheese collection, representing a unique ape with various traits."
+    },
+    "image": "https://ipfs.io/ipfs/QmS9qBfdAiqjg9jTPxNQq3GjnJ8PMNciPENLwPDqco3yX2",
+    "attributes": [
+      {
+        "trait_type": "color",
+        "value": "black"
+      },
+      {
+        "trait_type": "hat",
+        "value": "yes"
+      },
+      {
+        "trait_type": "Demeanor",
+        "value": "happy"
+      },
+      {
+        "trait_type": "Iris",
+        "value": "brown"
+      },
+      {
+        "trait_type": "clothes",
+        "value": "jacket"
+      },
+      {
+        "trait_type": "Bottom lid",
+        "value": "Low"
+      }
+    ],
+    "edition": 0,
+    "compiler": "UMiami FinTech Boot Camp Group 2", 
+    "localization": {
+        "type": "object",
+        "required": ["uri", "default", "locales"],
+        "properties": {
+            "uri": {
+                "type": "string",
+                "description": "https://drive.google.com/file/d/1K2EHjda6QSZ8ALUKT-OSuRFoJav5202z/view?usp=sharing"
+            },
+            "default": {
+                "type": "string",
+                "description": "en-US"
+            },
+            "locales": {
+                "type": "array",
+                "description": ["en-US", "es-ES"]
+            }
+        }
+    }
+}
