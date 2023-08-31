@@ -80,7 +80,7 @@ def display_nfts(nfts):
         if list_button:
             getCurrentListingPrice()
             # list_nft(nft["tokenId"], nft["price"], wallet_address, chain_id=1337)  
-
+#Features to work on going forward
        #if coming_soon_button:
             #st.write(f'wallet address:{wallet_address}')
             #mark_coming_soon(nft["tokenId"], wallet_address)
@@ -116,6 +116,7 @@ def list_nft(token_id, price, wallet_address, chain_id):
     tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
     st.write(f'Transaction sent: {tx_hash.hex()}')
 
+#Features to work on going forward 
 
 #def mark_coming_soon(token_id, address):
     #address = "0x182cbd20b3391348c881683048f14bb5F1A2A51d"
