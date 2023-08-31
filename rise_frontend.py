@@ -66,7 +66,8 @@ def display_nfts(nfts):
     for nft_key, nft_data in nfts.items():
         nft_name, nft_price, nft_token_id, nft_image_url = nft_data
         st.sidebar.write(f'NFT: {nft_name}, Price: {nft_price}')
-        st.sidebar.image(nft_image_url, width=200)
+        st.write(f'NFT: {nft_name}')
+        st.image(nft_image_url, width=400)
         
         buy_button = st.sidebar.button(f'Buy {nft_name}')
         list_button = st.sidebar.button(f'List {nft_name}')
