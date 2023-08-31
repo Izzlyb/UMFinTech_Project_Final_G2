@@ -21,7 +21,7 @@ w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 def load_contract():
 
     # Load the contract ABI
-    with open('ArtRegistry.json') as f:
+    with open('ArtRegistryABI.json') as f:
         contract_abi = json.load(f)
 
     # Set the contract address (this is the address of the deployed contract)
