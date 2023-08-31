@@ -44,8 +44,6 @@ st.title('R.I.S.E Marketplace')
 # Input field for entering wallet address
 wallet_address = st.text_input('Enter your Wallet Address')
 
-                       
-#register_nft_with_metadata(metadata, wallet_address, chain_id=1337)
 
 def mint_nft(ipfs_metadata_uri, wallet_address, chain_id):
     # Call the mintNFT function on the NFTToken contract
@@ -71,8 +69,8 @@ def display_nfts(nfts):
 
         buy_button = st.button(f'Buy {nft["name"]}')
         list_button = st.button(f'List {nft["name"]}')
-        coming_soon_button = st.button(f'Coming Soon {nft["name"]}')
-        create_nft_button = st.button(f'Create NFT {nft["name"]}')
+        #coming_soon_button = st.button(f'Coming Soon {nft["name"]}')
+        #create_nft_button = st.button(f'Create NFT {nft["name"]}')
 
         if buy_button:
             buy_nft(nft["tokenId"], nft["price"], wallet_address, chain_id=1337)  
@@ -81,12 +79,12 @@ def display_nfts(nfts):
             getCurrentListingPrice()
             # list_nft(nft["tokenId"], nft["price"], wallet_address, chain_id=1337)  
 
-        if coming_soon_button:
-            st.write(f'wallet address:{wallet_address}')
-            mark_coming_soon(nft["tokenId"], wallet_address)
+       #if coming_soon_button:
+            #st.write(f'wallet address:{wallet_address}')
+            #mark_coming_soon(nft["tokenId"], wallet_address)
 
-        if create_nft_button:
-            create_nft(wallet_address, chain_id=1337)
+        #if create_nft_button:
+            #create_nft(wallet_address, chain_id=1337)
   
     
 def buy_nft(token_id, price, wallet_address, chain_id):
@@ -117,27 +115,27 @@ def list_nft(token_id, price, wallet_address, chain_id):
     st.write(f'Transaction sent: {tx_hash.hex()}')
 
 
-def mark_coming_soon(token_id, address):
-    address = "0x182cbd20b3391348c881683048f14bb5F1A2A51d"
+#def mark_coming_soon(token_id, address):
+    #address = "0x182cbd20b3391348c881683048f14bb5F1A2A51d"
     # Call the markNFTComingSoon function on the NFTMarket contract
-    tx_hash = nft_market_contract.functions.markNFTComingSoon(token_id).transact({'from': address, 'gas': 1000000})
-    receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+    #tx_hash = nft_market_contract.functions.markNFTComingSoon(token_id).transact({'from': address, 'gas': 1000000})
+    #receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     # signed_txn = w3.eth.account.signTransaction(transaction, private_key='0x4523fcc229b66d5809b6ff6c870ec243e37119ffa3923dc71fcd410daf08f872')
     # tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
-    st.write(f'Transaction sent: {receipt}')
+    #st.write(f'Transaction sent: {receipt}')
 
 
-def create_nft():
+#def create_nft():
     # Call the createNFT function on the NFTMarket contract
-    transaction = nft_market_contract.functions.createMarketItem().transact({
-        'chainId': 1337,  # Ethereum mainnet
-        'gas': 2000000,  # Adjust gas limit
-        'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
-        'nonce': w3.eth.get_transaction_count(wallet_address),
-    })
-    signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY_ADDRESS'))
-    tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
-    st.write(f'Transaction sent: {tx_hash.hex()}')
+    #transaction = nft_market_contract.functions.createMarketItem().transact({
+        #'chainId': 1337,  # Ethereum mainnet
+        #'gas': 2000000,  # Adjust gas limit
+       # 'gasPrice': w3.to_wei('50', 'gwei'),  # Adjust gas price
+        #'nonce': w3.eth.get_transaction_count(wallet_address),
+  #  })
+    #signed_txn = w3.eth.account.signTransaction(transaction, private_key=os.getenv('PRIVATE_KEY_ADDRESS'))
+    #tx_hash = w3.eth.sendRawTransaction(signed_txn.rawTransaction)
+    #st.write(f'Transaction sent: {tx_hash.hex()}')
 
 
 def getCurrentListingPrice():
